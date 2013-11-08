@@ -37,7 +37,8 @@ class Parser extends EventDispatcher
     {
         $shop = null;
         $xml = $this->xmlReader;
-        while ($xml->read()) {
+        $xml->read();
+        while ($xml->nodeType) {
             if ($xml->nodeType == \XMLReader::END_ELEMENT) {
                 array_pop($this->path);
             }
@@ -49,14 +50,17 @@ class Parser extends EventDispatcher
                     case 'yml_catalog/shop':
                         $shop = $this->factory->createShop();
                         $this->dispatch('shop', new ShopEvent($shop));
+                        $xml->read();
                         break;
                     case 'yml_catalog/shop/currencies':
                         $currencies = $this->parseCurrencies($shop);
                         $this->dispatch('currencies', new CurrenciesEvent($currencies));
+                        $xml->next();
                         break;
                     case 'yml_catalog/shop/categories':
                         $categories = $this->parseCategories($shop);
                         $this->dispatch('categories', new CategoriesEvent($categories));
+                        $xml->next();
                         break;
                     case 'yml_catalog/shop/offers/offer':
                         try {
@@ -66,8 +70,13 @@ class Parser extends EventDispatcher
                         }
 
                         $this->dispatch('offer', new OfferEvent($offer));
+                        $xml->next();
                         break;
+                    default:
+                        $xml->read();
                 }
+            } else {
+                $xml->read();
             }
         }
     }
@@ -175,7 +184,7 @@ class Parser extends EventDispatcher
     protected function loadElementXml()
     {
         $xml = $this->xmlReader->readOuterXml();
-        $this->xmlReader->next();
+
         array_pop($this->path);
         return simplexml_load_string($xml);
     }

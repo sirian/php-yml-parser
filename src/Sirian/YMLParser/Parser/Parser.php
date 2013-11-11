@@ -66,6 +66,7 @@ class Parser extends EventDispatcher
                         try {
                             $offer = $this->parseOffer($shop);
                         } catch (UnsupportedOfferTypeException $e) {
+                            $xml->next();
                             break;
                         }
 

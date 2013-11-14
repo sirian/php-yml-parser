@@ -48,6 +48,8 @@ class Offer
      */
     protected $shop;
 
+    protected $typePrefix;
+
     protected $pictures = [];
 
     public function getId()
@@ -178,6 +180,18 @@ class Offer
     public function addPicture($picture)
     {
         $this->pictures[] = $picture;
+        return $this;
+    }
+
+    public function getTypePrefix()
+    {
+        return $this->typePrefix;
+    }
+
+    public function setTypePrefix($typePrefix)
+    {
+        $this->typePrefix = $typePrefix;
+
         return $this;
     }
 }

@@ -52,6 +52,8 @@ class Offer
 
     protected $pictures = [];
 
+    protected $attributes = [];
+
     public function getId()
     {
         return $this->id;
@@ -193,5 +195,33 @@ class Offer
         $this->typePrefix = $typePrefix;
 
         return $this;
+    }
+
+    public function getAttributes()
+    {
+        return $this->attributes;
+    }
+
+    public function setAttributes($attributes)
+    {
+        $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    public function setAttribute($key, $param)
+    {
+        $this->attributes[$key] = $param;
+        return $this;
+    }
+
+    public function hasAttribute($key)
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    public function getAttribute($key, $defaultValue = null)
+    {
+        return $this->hasAttribute($key) ? $this->attributes[$key] : $defaultValue;
     }
 }

@@ -40,4 +40,9 @@ class VendorModelOffer extends Offer
         $this->model = $model;
         return $this;
     }
+
+    public function setAttribute($key, $param)
+    {
+        $this->attributes[$key] = $param;
+    }
 }

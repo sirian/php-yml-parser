@@ -154,6 +154,10 @@ class Parser extends EventDispatcher
         $type = (string)$elem['type'];
 
         $offer = $this->factory->createOffer($type);
+        foreach ($elem->attributes() as $key => $value) {
+            $offer->setAttribute($key, (string)$value);
+        }
+
         $offer
             ->setId($elem['id'])
             ->setAvailable(((string)$elem['available']) == 'true' ? true : false)

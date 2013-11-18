@@ -44,8 +44,10 @@ class Parser extends EventDispatcher
             }
 
             if ($xml->nodeType == \XMLReader::ELEMENT) {
+
                 array_push($this->path, $xml->name);
                 $path = implode('/', $this->path);
+
                 switch ($path) {
                     case 'yml_catalog/shop':
                         $shop = $this->factory->createShop();
@@ -152,6 +154,10 @@ class Parser extends EventDispatcher
     protected function createOffer(\SimpleXMLElement $elem, Shop $shop)
     {
         $type = (string)$elem['type'];
+
+        if (!$type) {
+            $type = 'vendor.model';
+        }
 
         $offer = $this->factory->createOffer($type);
         foreach ($elem->attributes() as $key => $value) {

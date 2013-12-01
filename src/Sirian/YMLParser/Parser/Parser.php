@@ -105,7 +105,11 @@ class Parser extends EventDispatcher
 
 
         foreach ($parents as $id => $parentId) {
-            $parent = $shop->getCategory($parentId);
+            if ($id != $parentId) {
+                $parent = $shop->getCategory($parentId);
+            } else {
+                $parent = null;
+            }
             $shop
                 ->getCategory($id)
                 ->setParent($parent)

@@ -100,9 +100,11 @@ class Parser extends EventDispatcher
         $parents = [];
         foreach ($xml->category as $elem) {
             $shop->addCategory($this->createCategory($elem, $shop));
-            $parents[(int)$elem['id']] = (int)$elem['parentId'];
-        }
 
+            if (isset($elem['parentId'])) {
+                $parents[(int)$elem['id']] = (int)$elem['parentId'];
+            }
+        }
 
         foreach ($parents as $id => $parentId) {
             if ($id != $parentId) {

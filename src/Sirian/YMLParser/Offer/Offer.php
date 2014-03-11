@@ -54,6 +54,11 @@ class Offer
 
     protected $attributes = [];
 
+    /**
+     * @var \SimpleXMLElement
+     */
+    protected $xml;
+
     public function getId()
     {
         return $this->id;
@@ -223,5 +228,17 @@ class Offer
     public function getAttribute($key, $defaultValue = null)
     {
         return $this->hasAttribute($key) ? $this->attributes[$key] : $defaultValue;
+    }
+
+    public function getXml()
+    {
+        return $this->xml;
+    }
+
+    public function setXml($xml)
+    {
+        $this->xml = $xml;
+
+        return $this;
     }
 }

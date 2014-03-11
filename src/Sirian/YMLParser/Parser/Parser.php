@@ -143,9 +143,9 @@ class Parser extends EventDispatcher
 
     protected function createCategory(\SimpleXMLElement $elem, Shop $shop)
     {
-        $id = (int)$elem['id'];
+        $id = (string)$elem['id'];
 
-        $parents[$id] = (int)$elem['parentId'];
+        $parents[$id] = (string)$elem['parentId'];
 
         $category = $this->factory->createCategory();
 
@@ -171,9 +171,10 @@ class Parser extends EventDispatcher
         }
 
         $offer
-            ->setId($elem['id'])
+            ->setId((string)$elem['id'])
             ->setAvailable(((string)$elem['available']) == 'true' ? true : false)
             ->setType($type)
+            ->setXml($elem)
         ;
 
         foreach ($elem as $field => $value) {

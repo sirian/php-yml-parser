@@ -102,7 +102,7 @@ class Parser extends EventDispatcher
             $shop->addCategory($this->createCategory($elem, $shop));
 
             if (isset($elem['parentId'])) {
-                $parents[(int)$elem['id']] = (int)$elem['parentId'];
+                $parents[(string)$elem['id']] = (string)$elem['parentId'];
             }
         }
 

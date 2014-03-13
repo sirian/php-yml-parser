@@ -101,8 +101,11 @@ class Parser extends EventDispatcher
         foreach ($xml->category as $elem) {
             $shop->addCategory($this->createCategory($elem, $shop));
 
-            if (isset($elem['parentId'])) {
-                $parents[(string)$elem['id']] = (string)$elem['parentId'];
+            foreach (['parentId', 'parent_id'] as $field) {
+                if (isset($elem[$field])) {
+                    $parents[(string)$elem['id']] = (string)$elem[$field];
+                    break;
+                }
             }
         }
 
@@ -193,6 +196,7 @@ class Parser extends EventDispatcher
         }
 
         $categoryId = (string)$elem->categoryId;
+        
         if ($shop->getCategory($categoryId)) {
             $offer->setCategory($shop->getCategory($categoryId));
         }

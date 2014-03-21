@@ -177,8 +177,10 @@ class Offer
     public function setPictures($pictures)
     {
         $this->pictures = [];
-        foreach ($pictures as $picture) {
-            $this->addPicture($picture);
+        if (is_array($pictures) || $pictures instanceof \Traversable) {
+            foreach ($pictures as $picture) {
+                $this->addPicture($picture);
+            }
         }
 
         return $this;

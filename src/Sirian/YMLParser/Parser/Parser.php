@@ -47,7 +47,9 @@ class Parser extends EventDispatcher
 
                 array_push($this->path, $xml->name);
                 $path = implode('/', $this->path);
-
+                if ($xml->isEmptyElement) {
+                    array_pop($this->path);
+                }
                 switch ($path) {
                     case 'yml_catalog/shop':
                         $shop = $this->factory->createShop();
@@ -196,7 +198,7 @@ class Parser extends EventDispatcher
         }
 
         $categoryId = (string)$elem->categoryId;
-        
+
         if ($shop->getCategory($categoryId)) {
             $offer->setCategory($shop->getCategory($categoryId));
         }

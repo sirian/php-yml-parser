@@ -210,7 +210,7 @@ class Parser extends EventDispatcher
         $xml = $this->xmlReader->readOuterXml();
 
         array_pop($this->path);
-        return simplexml_load_string($xml);
+        return simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?>' . $xml);
     }
 
     private function camelize($field)

@@ -37,51 +37,46 @@ class Parser extends EventDispatcher
     {
         $shop = null;
         $xml = $this->xmlReader;
-        $xml->read();
-        while ($xml->nodeType) {
+        while ($xml->read()) {
             if ($xml->nodeType == \XMLReader::END_ELEMENT) {
                 array_pop($this->path);
+                continue;
             }
 
-            if ($xml->nodeType == \XMLReader::ELEMENT) {
 
+            if ($xml->nodeType == \XMLReader::ELEMENT) {
                 array_push($this->path, $xml->name);
                 $path = implode('/', $this->path);
+
                 if ($xml->isEmptyElement) {
                     array_pop($this->path);
                 }
+
+
                 switch ($path) {
                     case 'yml_catalog/shop':
                         $shop = $this->factory->createShop();
                         $this->dispatch('shop', new ShopEvent($shop));
-                        $xml->read();
                         break;
                     case 'yml_catalog/shop/currencies':
                         $currencies = $this->parseCurrencies($shop);
                         $this->dispatch('currencies', new CurrenciesEvent($currencies));
-                        $xml->next();
                         break;
                     case 'yml_catalog/shop/categories':
                         $categories = $this->parseCategories($shop);
                         $this->dispatch('categories', new CategoriesEvent($categories));
-                        $xml->next();
                         break;
                     case 'yml_catalog/shop/offers/offer':
                         try {
                             $offer = $this->parseOffer($shop);
                         } catch (UnsupportedOfferTypeException $e) {
-                            $xml->next();
                             break;
                         }
 
                         $this->dispatch('offer', new OfferEvent($offer));
-                        $xml->next();
                         break;
                     default:
-                        $xml->read();
                 }
-            } else {
-                $xml->read();
             }
         }
     }
@@ -209,7 +204,6 @@ class Parser extends EventDispatcher
     {
         $xml = $this->xmlReader->readOuterXml();
 
-        array_pop($this->path);
         return simplexml_load_string('<?xml version="1.0" encoding="UTF-8"?>' . $xml);
     }
 

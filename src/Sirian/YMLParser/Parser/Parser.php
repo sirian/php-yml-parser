@@ -181,7 +181,7 @@ class Parser extends EventDispatcher
             foreach (['add', 'set'] as $method) {
                 $method .= $this->camelize($field);
                 if (method_exists($offer, $method)) {
-                    call_user_func([$offer, $method], (string)$value);
+                    call_user_func([$offer, $method], count($value->children()) ? $value : (string)$value);
                     break;
                 }
             }

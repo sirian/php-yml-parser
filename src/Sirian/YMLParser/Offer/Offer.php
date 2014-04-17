@@ -188,7 +188,7 @@ class Offer
 
     public function addPicture($picture)
     {
-        $this->pictures[] = $picture;
+        $this->pictures[] = (string)$picture;
         return $this;
     }
 

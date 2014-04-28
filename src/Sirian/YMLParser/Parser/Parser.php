@@ -131,9 +131,11 @@ class Parser extends EventDispatcher
 
     protected function createCurrency(\SimpleXMLElement $elem, Shop $shop)
     {
+        $id = $this->fixCurrency((string)$elem['id']);
+
         $currency = $this->factory->createCurrency();
         $currency
-            ->setId((string)$elem['id'])
+            ->setId($id)
             ->setRate((string)$elem['rate'])
             ->setPlus((int)$elem['plus'])
         ;
@@ -187,7 +189,8 @@ class Parser extends EventDispatcher
             }
         }
 
-        $currencyId = (string)$elem->currencyId;
+        $currencyId = $this->fixCurrency((string)$elem->currencyId);
+
         if ($shop->getCurrency($currencyId)) {
             $offer->setCurrency($shop->getCurrency($currencyId));
         }
@@ -210,5 +213,14 @@ class Parser extends EventDispatcher
     private function camelize($field)
     {
         return strtr(ucwords(strtr($field, array('_' => ' ', '.' => '_ '))), array(' ' => ''));
+    }
+
+    private function fixCurrency($id)
+    {
+        $id = strtoupper($id);
+        if ('RUR' === $id) {
+            $id = 'RUB';
+        }
+        return $id;
     }
 }

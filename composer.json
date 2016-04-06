@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "symfony/event-dispatcher": "~2.3"
+        "symfony/event-dispatcher": ">=2.3"
     },
     "autoload": {
         "psr-0": {

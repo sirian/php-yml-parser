@@ -4,6 +4,7 @@ namespace Sirian\YMLParser\Parser;
 
 use Sirian\YMLParser\Exception\UnsupportedOfferTypeException;
 use Sirian\YMLParser\Factory\Factory;
+use Sirian\YMLParser\Offer\VendorModelOffer;
 use Sirian\YMLParser\Shop;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -159,6 +160,22 @@ class Parser extends EventDispatcher
         return $category;
     }
 
+    protected function createParam(\SimpleXMLElement $elem)
+    {
+        $name = (string)$elem['name'];
+        $unit = (string)$elem['unit'];
+
+        $param = $this->factory->createParam();
+
+        $param
+            ->setName($name)
+            ->setUnit($unit)
+            ->setValue((string)$elem)
+        ;
+
+        return $param;
+    }
+
     protected function createOffer(\SimpleXMLElement $elem, Shop $shop)
     {
         $type = (string)$elem['type'];
@@ -179,10 +196,16 @@ class Parser extends EventDispatcher
             ->setXml($elem)
         ;
 
+        if ($offer instanceof VendorModelOffer) {
+            foreach ($elem->param as $param) {
+                $offer->addParam($this->createParam($param));
+            }
+        }
+
         foreach ($elem as $field => $value) {
             foreach (['add', 'set'] as $method) {
                 $method .= $this->camelize($field);
-                if (method_exists($offer, $method)) {
+                if (!in_array($field, ['param']) && method_exists($offer, $method)) {
                     call_user_func([$offer, $method], count($value->children()) ? $value : (string)$value);
                     break;
                 }

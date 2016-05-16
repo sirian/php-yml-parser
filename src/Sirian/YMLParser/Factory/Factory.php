@@ -7,6 +7,7 @@ use Sirian\YMLParser\Currency;
 use Sirian\YMLParser\Exception\UnsupportedOfferTypeException;
 use Sirian\YMLParser\Offer\BookOffer;
 use Sirian\YMLParser\Offer\VendorModelOffer;
+use Sirian\YMLParser\Param;
 use Sirian\YMLParser\Shop;
 
 class Factory
@@ -14,6 +15,11 @@ class Factory
     public function createShop()
     {
         return new Shop();
+    }
+
+    public function createParam()
+    {
+        return new Param();
     }
 
     public function createCategory()

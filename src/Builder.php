@@ -1,0 +1,204 @@
+<?php
+
+namespace Sirian\YMLParser;
+
+use Sirian\YMLParser\Factory\Factory;
+use Sirian\YMLParser\Offer\Offer;
+
+class Builder
+{
+    /**
+     * @var Factory
+     */
+    private $factory;
+
+    /**
+     * @var Storage
+     */
+    private $storage;
+
+    /**
+     * @var Shop
+     */
+    private $shop;
+
+    public function __construct(Factory $factory, Storage $storage)
+    {
+        $this->factory = $factory;
+        $this->storage = $storage;
+    }
+
+    public function getShop()
+    {
+        if (null == $this->shop) {
+            $this->buildShop();
+        }
+        return $this->shop;
+    }
+
+    /**
+     * @return Offer[]
+     */
+    public function getOffers()
+    {
+        $count = 0;
+        foreach ($this->storage->getNextOfferXML() as $xml) {
+            $xml = simplexml_load_string(json_decode($xml));
+            $offer = $this->buildOffer($xml);
+            yield $count => $offer;
+            $count++;
+        }
+    }
+
+    protected function buildShop()
+    {
+        $this->shop = $this->factory->createShop();
+        $xml = simplexml_load_string($this->storage->getShopXML());
+
+        foreach ($xml->xpath('//currencies/currency') as $elem) {
+            $this->shop->addCurrency($this->buildCurrency($elem));
+        }
+
+        $this->buildCategories($xml);
+
+        $this
+            ->shop
+            ->setName((string)$xml->name)
+            ->setAgency((string)$xml->agency)
+            ->setEmail((string)$xml->email)
+            ->setCompany((string)$xml->company)
+            ->setPlatform((string)$xml->platform)
+            ->setUrl((string)$xml->url)
+            ->setVersion((string)$xml->version)
+            ->setOffersCount($this->storage->getOffersCount())
+            ->setXml($xml)
+        ;
+    }
+
+    protected function createParam(\SimpleXMLElement $xml)
+    {
+        $name = (string)$xml['name'];
+        $unit = (string)$xml['unit'];
+
+        $param = $this->factory->createParam();
+
+        $param
+            ->setName($name)
+            ->setUnit($unit)
+            ->setValue((string)$xml)
+        ;
+
+        return $param;
+    }
+
+    protected function buildCategories(\SimpleXMLElement $xml)
+    {
+        $parents = [];
+        foreach ($xml->xpath('//categories/category') as $xml) {
+            $this->shop->addCategory($this->buildCategory($xml));
+
+            foreach (['parentId', 'parent_id'] as $field) {
+                if (isset($xml[$field])) {
+                    $parents[(string)$xml['id']] = (string)$xml[$field];
+                    break;
+                }
+            }
+        }
+
+        foreach ($parents as $id => $parentId) {
+            if ($id != $parentId) {
+                $parent = $this->shop->getCategory($parentId);
+            } else {
+                $parent = null;
+            }
+            $this
+                ->shop
+                ->getCategory($id)
+                ->setParent($parent)
+            ;
+        }
+    }
+
+    protected function buildCurrency(\SimpleXMLElement $xml)
+    {
+        $id = Currency::normalize((string)$xml['id']);
+
+        $currency = $this->factory->createCurrency();
+        $currency
+            ->setId($id)
+            ->setRate((string)$xml['rate'])
+            ->setPlus((int)$xml['plus'])
+        ;
+
+        return $currency;
+    }
+
+    protected function buildCategory(\SimpleXMLElement $xml)
+    {
+        $id = (string)$xml['id'];
+
+        $parents[$id] = (string)$xml['parentId'];
+
+        $category = $this->factory->createCategory();
+
+        $category
+            ->setId($id)
+            ->setName((string)$xml)
+        ;
+
+        return $category;
+    }
+
+    protected function buildOffer(\SimpleXMLElement $xml)
+    {
+        $type = (string)$xml['type'];
+
+        if (!$type) {
+            $type = 'vendor.model';
+        }
+
+        $offer = $this->factory->createOffer($type);
+        foreach ($xml->attributes() as $key => $value) {
+            $offer->setAttribute($key, (string)$value);
+        }
+
+        $offer
+            ->setId((string)$xml['id'])
+            ->setAvailable(((string)$xml['available']) == 'true' ? true : false)
+            ->setType($type)
+            ->setXml($xml)
+        ;
+
+        foreach ($xml->param as $param) {
+            $offer->addParam($this->createParam($param));
+        }
+
+        foreach ($xml as $field => $value) {
+            foreach (['add', 'set'] as $method) {
+                $method .= $this->camelize($field);
+                if (!in_array($field, ['param']) && method_exists($offer, $method)) {
+                    call_user_func([$offer, $method], count($value->children()) ? $value : (string)$value);
+                    break;
+                }
+            }
+        }
+
+        $currencyId = Currency::normalize((string)$xml->currencyId);
+
+        if ($this->shop->getCurrency($currencyId)) {
+            $offer->setCurrency($this->shop->getCurrency($currencyId));
+        }
+
+        $categoryId = (string)$xml->categoryId;
+
+        if ($this->shop->getCategory($categoryId)) {
+            $offer->setCategory($this->shop->getCategory($categoryId));
+        }
+        return $offer;
+    }
+
+    private function camelize($field)
+    {
+        return strtr(ucwords(strtr($field, array('_' => ' ', '.' => '_ '))), array(' ' => ''));
+    }
+}

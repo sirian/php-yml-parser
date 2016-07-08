@@ -95,7 +95,7 @@ class Builder
     {
         $parents = [];
         foreach ($xml->xpath('//categories/category') as $xml) {
-            $this->shop->addCategory($this->buildCategory($xml));
+            $this->getShop()->addCategory($this->buildCategory($xml));
 
             foreach (['parentId', 'parent_id'] as $field) {
                 if (isset($xml[$field])) {
@@ -107,12 +107,12 @@ class Builder
 
         foreach ($parents as $id => $parentId) {
             if ($id != $parentId) {
-                $parent = $this->shop->getCategory($parentId);
+                $parent = $this->getShop()->getCategory($parentId);
             } else {
                 $parent = null;
             }
             $this
-                ->shop
+                ->getShop()
                 ->getCategory($id)
                 ->setParent($parent)
             ;
@@ -185,14 +185,14 @@ class Builder
 
         $currencyId = Currency::normalize((string)$xml->currencyId);
 
-        if ($this->shop->getCurrency($currencyId)) {
-            $offer->setCurrency($this->shop->getCurrency($currencyId));
+        if ($this->getShop()->getCurrency($currencyId)) {
+            $offer->setCurrency($this->getShop()->getCurrency($currencyId));
         }
 
         $categoryId = (string)$xml->categoryId;
 
-        if ($this->shop->getCategory($categoryId)) {
-            $offer->setCategory($this->shop->getCategory($categoryId));
+        if ($this->getShop()->getCategory($categoryId)) {
+            $offer->setCategory($this->getShop()->getCategory($categoryId));
         }
         return $offer;
     }

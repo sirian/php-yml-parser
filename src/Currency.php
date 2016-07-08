@@ -39,9 +39,18 @@ class Currency
     protected $rate;
 
     /**
-     * @var Процент надбавки к курсу
+     * @var float Процент надбавки к курсу
      */
     protected $plus = 0;
+
+    public static function normalize($id)
+    {
+        $id = strtoupper($id);
+        if ('RUR' === $id) {
+            $id = 'RUB';
+        }
+        return $id;
+    }
 
     public function getId()
     {

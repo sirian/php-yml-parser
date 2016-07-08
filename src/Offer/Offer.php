@@ -4,6 +4,7 @@ namespace Sirian\YMLParser\Offer;
 
 use Sirian\YMLParser\Category;
 use Sirian\YMLParser\Currency;
+use Sirian\YMLParser\Param;
 use Sirian\YMLParser\Shop;
 
 class Offer
@@ -58,6 +59,11 @@ class Offer
      * @var \SimpleXMLElement
      */
     protected $xml;
+
+    /**
+     * @var Param[]
+     */
+    protected $params;
 
     public function getId()
     {
@@ -240,6 +246,38 @@ class Offer
     public function setXml($xml)
     {
         $this->xml = $xml;
+
+        return $this;
+    }
+
+    public function getParam($name)
+    {
+        $name = mb_strtolower($name, 'UTF-8');
+        return isset($this->params[$name]) ? $this->params[$name] : null;
+    }
+
+
+    public function getParams()
+    {
+        return $this->params;
+    }
+
+    public function addParam(Param $param)
+    {
+        $name = mb_strtolower($param->getName(), 'UTF-8');
+        $this->params[$name] = $param;
+
+        return $this;
+    }
+
+    public function setParams($params)
+    {
+        $this->params = [];
+        if (is_array($params) || $params instanceof \Traversable) {
+            foreach ($params as $param) {
+                $this->addParam($param);
+            }
+        }
 
         return $this;
     }

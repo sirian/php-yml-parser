@@ -59,12 +59,6 @@ class Shop
     protected $email;
 
     /**
-     * Общая стоимость доставки для своего региона.
-     * @var float
-     */
-    protected $localDeliveryCost = 0;
-
-    /**
      * @var Category[]
      */
     protected $categories = [];
@@ -73,6 +67,16 @@ class Shop
      * @var Currency[]
      */
     protected $currencies = [];
+
+    /**
+     * @var int Количество офферов магазина
+     */
+    protected $offersCount;
+
+    /**
+     * @var \SimpleXMLElement
+     */
+    protected $xml;
 
     public function getName()
     {
@@ -183,14 +187,27 @@ class Shop
         return $this->currencies;
     }
 
-    public function getLocalDeliveryCost()
+    public function getOffersCount()
     {
-        return $this->localDeliveryCost;
+        return $this->offersCount;
     }
 
-    public function setLocalDeliveryCost($localDeliveryCost)
+    public function setOffersCount($offersCount)
     {
-        $this->localDeliveryCost = (float)$localDeliveryCost;
+        $this->offersCount = $offersCount;
+
+        return $this;
+    }
+
+    public function getXml()
+    {
+        return $this->xml;
+    }
+
+    public function setXml($xml)
+    {
+        $this->xml = $xml;
+
         return $this;
     }
 }

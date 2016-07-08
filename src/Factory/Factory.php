@@ -4,13 +4,18 @@ namespace Sirian\YMLParser\Factory;
 
 use Sirian\YMLParser\Category;
 use Sirian\YMLParser\Currency;
-use Sirian\YMLParser\Exception\UnsupportedOfferTypeException;
 use Sirian\YMLParser\Offer\BookOffer;
+use Sirian\YMLParser\Offer\Offer;
 use Sirian\YMLParser\Offer\VendorModelOffer;
+use Sirian\YMLParser\Param;
 use Sirian\YMLParser\Shop;
 
 class Factory
 {
+    public function createParam()
+    {
+        return new Param();
+    }
     public function createShop()
     {
         return new Shop();
@@ -34,7 +39,7 @@ class Factory
             case 'book':
                 return new BookOffer();
             default:
-                throw new UnsupportedOfferTypeException();
+                return new Offer();
         }
     }
 }

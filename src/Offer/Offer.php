@@ -34,6 +34,9 @@ class Offer
     protected $url = '';
 
     protected $price = 0;
+
+    protected $oldPrice = 0;
+
     /**
      * @var Currency
      */
@@ -278,6 +281,18 @@ class Offer
                 $this->addParam($param);
             }
         }
+
+        return $this;
+    }
+
+    public function getOldPrice()
+    {
+        return $this->oldPrice;
+    }
+
+    public function setOldPrice($oldPrice)
+    {
+        $this->oldPrice = $oldPrice;
 
         return $this;
     }

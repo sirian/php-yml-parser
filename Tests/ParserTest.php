@@ -40,5 +40,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(3, $offer->getParam('скорость')->getValue());
         $this->assertEquals('true', $offer->getAttribute('available'));
+        $this->assertEquals(25000, $offer->getOldPrice());
+        $this->assertEquals(15000, $offer->getPrice());
     }
 }

@@ -43,6 +43,7 @@
             <offer id="12341" type="vendor.model" bid="13" cbid="20" available="true">
                 <url>http://magazin.ru/product_page.asp?pid=14344</url>
                 <price>15000</price>
+                <oldprice>25000</oldprice>
                 <currencyId>RUR</currencyId>
                 <categoryId type="Own">101</categoryId>
                 <picture>http://magazin.ru/img/device14344.jpg</picture>

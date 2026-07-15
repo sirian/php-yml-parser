@@ -1,141 +1,87 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sirian\YMLParser;
 
 use Sirian\YMLParser\Builder\BuilderInterface;
 use Sirian\YMLParser\Exception\YMLException;
 use Sirian\YMLParser\Factory\Factory;
 use Sirian\YMLParser\Factory\FactoryInterface;
+use Sirian\YMLParser\Reader\Reader;
 
 class Parser
 {
-    protected $xmlReader;
-    protected $factory;
+    private FactoryInterface $factory;
 
-    private $path = [];
-
-    public function __construct(FactoryInterface $factory = null)
+    public function __construct(?FactoryInterface $factory = null)
     {
-        if (null == $factory) {
-            $factory = new Factory();
-        }
-
-        $this->xmlReader = new \XMLReader();
-        $this->factory = $factory;
+        $this->factory = $factory ?? new Factory();
     }
 
     /**
-     * @param $file
-     * @return BuilderInterface
      * @throws YMLException
      */
-    public function parse($file)
+    public function parse(string $file): BuilderInterface
     {
-        $this->path = [];
+        if (!is_file($file) || !is_readable($file)) {
+            throw new YMLException(sprintf('YML file is missing or not readable: %s', $file));
+        }
 
-        $this->xmlReader->open($file);
-        $result = $this->read();
-        $this->xmlReader->close();
+        $reader = new Reader();
 
-        return $result;
+        $previousUseErrors = libxml_use_internal_errors(true);
+        libxml_clear_errors();
+
+        try {
+            if (!$reader->open($file, LIBXML_NONET | LIBXML_COMPACT)) {
+                throw new YMLException(sprintf('Cannot open YML file: %s', $file));
+            }
+
+            return $this->read($reader);
+        } catch (\Throwable $e) {
+            $reader->close();
+            throw $e;
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previousUseErrors);
+        }
     }
 
-    protected function read()
+    /**
+     * @throws YMLException
+     */
+    private function read(Reader $reader): BuilderInterface
     {
-        $xml = $this->xmlReader;
+        if (!$reader->readUntil('/yml_catalog/shop')) {
+            $reader->close();
+            throw new YMLException('Invalid YML file: <shop> element not found');
+        }
+
+        if (!$reader->stepIn()) {
+            $reader->close();
+
+            return $this->factory->createBuilder('<shop></shop>', null);
+        }
+
         $shopXML = '';
-        if (!$this->moveToShop()) {
-            throw new YMLException('Invalid YML file');
-        }
-
-        if (!$this->stepIn()) {
-            throw new YMLException('Invalid YML file');
-        }
-
-        $storage = $this->factory->createStorage();
 
         do {
-            if ('yml_catalog/shop/offers' == $this->getPath()) {
-                if ($this->stepIn()) {
-                    do {
-                        $storage->addOfferXML($xml->readOuterXml());
-                    } while ($this->moveToNextSibling());
+            if ('/yml_catalog/shop/offers' === $reader->getPath()) {
+                if (!$reader->stepIn()) {
+                    $reader->close();
+
+                    return $this->factory->createBuilder('<shop>'.$shopXML.'</shop>', null);
                 }
-            } else {
-                $shopXML .= $xml->readOuterXml();
-            }
-        } while ($this->moveToNextSibling());
 
-        $shopXML = '<shop>' . $shopXML . '</shop>';
-
-        $storage->setShopXML($shopXML);
-
-        return $this->factory->createBuilder($storage);
-    }
-
-    private function moveToShop()
-    {
-        $xml = $this->xmlReader;
-
-        while ($xml->read()) {
-            if ($xml->nodeType == \XMLReader::END_ELEMENT) {
-                array_pop($this->path);
-                continue;
+                return $this->factory->createBuilder('<shop>'.$shopXML.'</shop>', $reader);
             }
 
+            $shopXML .= $reader->readOuterXml();
+        } while ($reader->moveToNextSibling());
 
-            if ($xml->nodeType !== \XMLReader::ELEMENT || $xml->isEmptyElement) {
-                continue;
-            }
+        $reader->close();
 
-            array_push($this->path, $xml->name);
-
-            if ('yml_catalog/shop' === $this->getPath()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function getPath()
-    {
-        return implode('/', $this->path);
-    }
-
-    private function stepIn()
-    {
-        $xml = $this->xmlReader;
-        if ($xml->isEmptyElement) {
-            return false;
-        }
-        while ($xml->read()) {
-            if (\XMLReader::ELEMENT == $xml->nodeType) {
-                array_push($this->path, $xml->name);
-                return true;
-            }
-            if (\XMLReader::END_ELEMENT == $xml->nodeType) {
-                array_pop($this->path);
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private function moveToNextSibling()
-    {
-        $xml = $this->xmlReader;
-        array_pop($this->path);
-        while ($xml->next()) {
-            if (\XMLReader::ELEMENT == $xml->nodeType) {
-                array_push($this->path, $xml->name);
-                return true;
-            }
-
-            if (\XMLReader::END_ELEMENT == $xml->nodeType) {
-                return false;
-            }
-        }
-        return false;
+        return $this->factory->createBuilder('<shop>'.$shopXML.'</shop>', null);
     }
 }

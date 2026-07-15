@@ -1,47 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sirian\YMLParser\Factory;
 
 use Sirian\YMLParser\Builder\BuilderInterface;
-use Sirian\YMLParser\Category;
-use Sirian\YMLParser\Currency;
-use Sirian\YMLParser\Offer\Offer;
-use Sirian\YMLParser\Param;
-use Sirian\YMLParser\Storage\StorageInterface;
+use Sirian\YMLParser\Model\Category;
+use Sirian\YMLParser\Model\Currency;
+use Sirian\YMLParser\Model\Offer\Offer;
+use Sirian\YMLParser\Model\Param;
+use Sirian\YMLParser\Model\Shop;
+use Sirian\YMLParser\Reader\Reader;
 
 interface FactoryInterface
 {
-    /**
-     * @return Param
-     */
-    public function createParam();
+    public function createParam(): Param;
 
-    public function createShop();
+    public function createShop(): Shop;
 
-    /**
-     * @return Category
-     */
-    public function createCategory();
+    public function createCategory(): Category;
 
-    /**
-     * @return Currency
-     */
-    public function createCurrency();
+    public function createCurrency(): Currency;
 
-    /**
-     * @param $type
-     * @return Offer
-     */
-    public function createOffer($type);
+    public function createOffer(string $type): Offer;
 
-    /**
-     * @return StorageInterface
-     */
-    public function createStorage();
-
-    /**
-     * @param StorageInterface $storage
-     * @return BuilderInterface
-     */
-    public function createBuilder(StorageInterface $storage);
+    public function createBuilder(string $shopXML, ?Reader $offerReader): BuilderInterface;
 }

@@ -1,58 +1,53 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sirian\YMLParser\Factory;
 
-use Sirian\YMLParser\Builder;
-use Sirian\YMLParser\Category;
-use Sirian\YMLParser\Currency;
-use Sirian\YMLParser\Offer\BookOffer;
-use Sirian\YMLParser\Offer\Offer;
-use Sirian\YMLParser\Offer\VendorModelOffer;
-use Sirian\YMLParser\Param;
-use Sirian\YMLParser\Shop;
-use Sirian\YMLParser\Storage;
-use Sirian\YMLParser\Storage\StorageInterface;
+use Sirian\YMLParser\Builder\Builder;
+use Sirian\YMLParser\Builder\BuilderInterface;
+use Sirian\YMLParser\Model\Category;
+use Sirian\YMLParser\Model\Currency;
+use Sirian\YMLParser\Model\Offer\BookOffer;
+use Sirian\YMLParser\Model\Offer\Offer;
+use Sirian\YMLParser\Model\Offer\VendorModelOffer;
+use Sirian\YMLParser\Model\Param;
+use Sirian\YMLParser\Model\Shop;
+use Sirian\YMLParser\Reader\Reader;
 
 class Factory implements FactoryInterface
 {
-    public function createParam()
+    public function createParam(): Param
     {
         return new Param();
     }
-    public function createShop()
+
+    public function createShop(): Shop
     {
         return new Shop();
     }
 
-    public function createCategory()
+    public function createCategory(): Category
     {
         return new Category();
     }
 
-    public function createCurrency()
+    public function createCurrency(): Currency
     {
         return new Currency();
     }
 
-    public function createOffer($type)
+    public function createOffer(string $type): Offer
     {
-        switch ($type) {
-            case 'vendor.model':
-                return new VendorModelOffer();
-            case 'book':
-                return new BookOffer();
-            default:
-                return new Offer();
-        }
+        return match ($type) {
+            'vendor.model' => new VendorModelOffer(),
+            'book' => new BookOffer(),
+            default => new Offer(),
+        };
     }
 
-    public function createStorage()
+    public function createBuilder(string $shopXML, ?Reader $offerReader): BuilderInterface
     {
-        return new Storage();
-    }
-
-    public function createBuilder(StorageInterface $storage)
-    {
-        return new Builder($this, $storage);
+        return new Builder($this, $shopXML, $offerReader);
     }
 }

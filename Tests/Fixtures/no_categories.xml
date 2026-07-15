@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yml_catalog date="2026-07-15 12:00">
+    <shop>
+        <name>NoCat</name>
+        <company>NoCat LLC</company>
+        <url>https://nocat.example.com/</url>
+        <currencies>
+            <currency id="RUB" rate="1"/>
+        </currencies>
+        <offers>
+            <offer id="1">
+                <price>100</price>
+                <currencyId>RUB</currencyId>
+                <categoryId>99</categoryId>
+                <name>Orphan</name>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

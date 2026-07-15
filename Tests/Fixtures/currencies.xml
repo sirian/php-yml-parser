@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yml_catalog date="2026-07-15 12:00">
+    <shop>
+        <name>CurShop</name>
+        <company>Cur LLC</company>
+        <url>https://cur.example.com/</url>
+        <currencies>
+            <currency id="RUR" rate="1"/>
+            <currency id="USD" rate="CBRF" plus="3"/>
+            <currency id="EUR" rate="90.5"/>
+        </currencies>
+        <categories>
+            <category id="1">Root</category>
+        </categories>
+        <offers>
+            <offer id="1">
+                <price>100</price>
+                <currencyId>rur</currencyId>
+                <categoryId>1</categoryId>
+                <name>Item</name>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

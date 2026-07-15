@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yml_catalog date="2026-07-15 12:00">
+    <shop>
+        <name>BookShop</name>
+        <company>Book LLC</company>
+        <url>https://book.example.com/</url>
+        <currencies>
+            <currency id="RUB" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="1">Books</category>
+        </categories>
+        <offers>
+            <offer id="b1" type="book">
+                <url>https://book.example.com/b1</url>
+                <price>350</price>
+                <currencyId>RUB</currencyId>
+                <categoryId>1</categoryId>
+                <name>The PHP Way</name>
+                <author>John Doe</author>
+                <publisher>OReilly</publisher>
+                <year>2024</year>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

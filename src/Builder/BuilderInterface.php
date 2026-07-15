@@ -1,19 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sirian\YMLParser\Builder;
 
-use Sirian\YMLParser\Offer\Offer;
-use Sirian\YMLParser\Shop;
+use Sirian\YMLParser\Model\Offer\Offer;
+use Sirian\YMLParser\Model\Shop;
 
 interface BuilderInterface
 {
-    /**
-     * @return Shop
-     */
-    public function getShop();
+    public function getShop(): Shop;
 
-    /**
-     * @return \Generator|Offer[]
-     */
-    public function getOffers();
+    /** @return \Generator<int, Offer> */
+    public function getOffers(): \Generator;
 }

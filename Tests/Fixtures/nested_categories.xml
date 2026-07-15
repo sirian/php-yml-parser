@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yml_catalog date="2026-07-15 12:00">
+    <shop>
+        <name>CatShop</name>
+        <company>Cat LLC</company>
+        <url>https://cat.example.com/</url>
+        <currencies>
+            <currency id="RUB" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="1">Electronics</category>
+            <category id="2" parentId="1">Phones</category>
+            <category id="3" parentId="2">Smartphones</category>
+            <category id="4" parent_id="1">Laptops</category>
+            <category id="5" parentId="5">SelfParent</category>
+        </categories>
+        <offers>
+            <offer id="1">
+                <price>100</price>
+                <currencyId>RUB</currencyId>
+                <categoryId>3</categoryId>
+                <name>Phone</name>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

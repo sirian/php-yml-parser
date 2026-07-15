@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<yml_catalog date="2026-07-15 12:00">
+    <shop>
+        <name>VmShop</name>
+        <company>Vm LLC</company>
+        <url>https://vm.example.com/</url>
+        <currencies>
+            <currency id="RUB" rate="1"/>
+        </currencies>
+        <categories>
+            <category id="1">Printers</category>
+        </categories>
+        <offers>
+            <offer id="42" type="vendor.model" available="false" bid="10">
+                <url>https://vm.example.com/p/42</url>
+                <price>15000</price>
+                <oldprice>25000</oldprice>
+                <currencyId>RUB</currencyId>
+                <categoryId>1</categoryId>
+                <picture>https://vm.example.com/img/1.jpg</picture>
+                <picture>https://vm.example.com/img/2.jpg</picture>
+                <picture>https://vm.example.com/img/3.jpg</picture>
+                <typePrefix>Printer</typePrefix>
+                <vendor>HP</vendor>
+                <vendorCode>Q7533A</vendorCode>
+                <model>Color LaserJet 3000</model>
+                <description>Fast color printer</description>
+                <param name="speed" unit="ppm">15</param>
+                <param name="Weight">10</param>
+            </offer>
+            <offer id="43">
+                <price>500</price>
+                <currencyId>RUB</currencyId>
+                <categoryId>1</categoryId>
+                <name>Untyped defaults to vendor.model</name>
+            </offer>
+        </offers>
+    </shop>
+</yml_catalog>

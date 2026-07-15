@@ -2,8 +2,10 @@
 
 namespace Sirian\YMLParser;
 
+use Sirian\YMLParser\Builder\BuilderInterface;
 use Sirian\YMLParser\Exception\YMLException;
 use Sirian\YMLParser\Factory\Factory;
+use Sirian\YMLParser\Factory\FactoryInterface;
 
 class Parser
 {
@@ -12,7 +14,7 @@ class Parser
 
     private $path = [];
 
-    public function __construct(Factory $factory = null)
+    public function __construct(FactoryInterface $factory = null)
     {
         if (null == $factory) {
             $factory = new Factory();
@@ -22,6 +24,11 @@ class Parser
         $this->factory = $factory;
     }
 
+    /**
+     * @param $file
+     * @return BuilderInterface
+     * @throws YMLException
+     */
     public function parse($file)
     {
         $this->path = [];
@@ -45,7 +52,7 @@ class Parser
             throw new YMLException('Invalid YML file');
         }
 
-        $storage = new Storage();
+        $storage = $this->factory->createStorage();
 
         do {
             if ('yml_catalog/shop/offers' == $this->getPath()) {
@@ -63,10 +70,8 @@ class Parser
 
         $storage->setShopXML($shopXML);
 
-        return new Builder($this->factory, $storage);
+        return $this->factory->createBuilder($storage);
     }
-
-
 
     private function moveToShop()
     {

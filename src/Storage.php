@@ -2,7 +2,9 @@
 
 namespace Sirian\YMLParser;
 
-class Storage
+use Sirian\YMLParser\Storage\StorageInterface;
+
+class Storage implements StorageInterface
 {
     protected $file;
 

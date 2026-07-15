@@ -2,18 +2,20 @@
 
 namespace Sirian\YMLParser;
 
-use Sirian\YMLParser\Factory\Factory;
+use Sirian\YMLParser\Builder\BuilderInterface;
+use Sirian\YMLParser\Factory\FactoryInterface;
 use Sirian\YMLParser\Offer\Offer;
+use Sirian\YMLParser\Storage\StorageInterface;
 
-class Builder
+class Builder implements BuilderInterface
 {
     /**
-     * @var Factory
+     * @var FactoryInterface
      */
     private $factory;
 
     /**
-     * @var Storage
+     * @var StorageInterface
      */
     private $storage;
 
@@ -22,7 +24,7 @@ class Builder
      */
     private $shop;
 
-    public function __construct(Factory $factory, Storage $storage)
+    public function __construct(FactoryInterface $factory, StorageInterface $storage)
     {
         $this->factory = $factory;
         $this->storage = $storage;
@@ -37,7 +39,7 @@ class Builder
     }
 
     /**
-     * @return Offer[]
+     * @return \Generator|Offer[]
      */
     public function getOffers()
     {
